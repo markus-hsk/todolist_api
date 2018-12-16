@@ -71,7 +71,7 @@ class Todo
         $complete_till_ts = $this->getCompleteTillTs();
         if(is_a($complete_till_ts, 'DateTime'))
         {
-            $complete_till_ts = $complete_till_ts->format('c');
+            $complete_till_ts = $complete_till_ts->format('Y-m-d');
         }
         else
         {
