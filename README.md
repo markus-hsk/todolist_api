@@ -5,6 +5,8 @@
 1. Im Root-Verzeichnis ausführen: 
     ```
     $ composer install
+    
+    $ php bin/console --no-interaction doctrine:migration:migrate
 
     $ php bin/console server:run
     ```

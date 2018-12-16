@@ -81,13 +81,20 @@ abstract class BasicController extends AbstractController
      * @return  \DateTime
      * @author  Markus Buscher
      */
-    protected function getDatetimeParam(Request $request, string $keyname, array $options = []): \DateTime
+    protected function getDatetimeParam(Request $request, string $keyname, array $options = []): ?\DateTime
     {
         $result = $this->getParam($request, $keyname, $options);
     
         try
         {
-            return new \DateTime($result);
+            if(strlen($result) > 0)
+            {
+                return new \DateTime($result);
+            }
+            else
+            {
+                return $result;
+            }
         }
         catch (\Exception $e)
         {

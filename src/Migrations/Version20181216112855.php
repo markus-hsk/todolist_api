@@ -29,6 +29,8 @@ final class Version20181216112855 extends AbstractMigration
                                 update_ts DATETIME NOT NULL)');
         $this->addSql('INSERT INTO todo (id, title, description, owner, complete_till_ts, insert_ts) SELECT id, title, description, owner, complete_till_ts, insert_ts FROM __temp__todo');
         $this->addSql('DROP TABLE __temp__todo');
+        $this->addSql('INSERT INTO todo (title, description, priority, owner, complete_till_ts, done, insert_ts, update_ts) VALUES
+                            ("Eine Todoliste entwickeln", "Zur Präsentation", 1, "Markus", "2018-12-18", 1, strftime(\'%Y-%m-%d %H:%M:%S\',\'now\'), strftime(\'%Y-%m-%d %H:%M:%S\',\'now\'))');
     }
 
     public function down(Schema $schema) : void
