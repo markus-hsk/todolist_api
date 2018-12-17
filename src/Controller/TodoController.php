@@ -2,6 +2,7 @@
 
 namespace App\Controller;
 
+use App\Repository\TodoRepository;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\Routing\Annotation\Route; // is need to parse the @Route annotations
@@ -15,13 +16,14 @@ class TodoController extends BasicController
      * Fetch the complete list of all available todos
      *
      * @Route("/todos", name="get todo list", methods={"GET"}, defaults={"_format": "json"})
-     * @param   void
+     * @param   Request $request
      * @return  JsonResponse
      * @author  Markus Buscher
      */
-    public function getAll()
+    public function getAll(Request $request)
     {
-    	$todos = $this->getTodoList();
+        $search_term = $this->getParam($request, 'searchterm', ['default' => '']);
+    	$todos = $this->getTodoList($search_term);
     	
     	$response_data = array();
     	foreach($todos as &$todo)
@@ -91,8 +93,8 @@ class TodoController extends BasicController
         // store the instance in the database
         $this->saveTodo($todo);
         
-        return $this->successJson([$todo->getPublicDataArray()], JsonResponse::HTTP_CREATED);
-        // @todo implement Location header
+        $headers = ['Location' => $request->getBaseUrl().'/todos/'.$todo->getId()];
+        return $this->successJson([$todo->getPublicDataArray()], JsonResponse::HTTP_CREATED, $headers);
     }
     
     
@@ -176,15 +178,23 @@ class TodoController extends BasicController
     /**
      * Fetches the complete available list of todos
      *
-     * @param   void
+     * @param   string  $searchterm
      * @return  Todo[]
      * @author  Markus Buscher
      */
-    protected function getTodoList(): array
+    protected function getTodoList(string $searchterm = ''): array
     {
-        $todos = $this->getDoctrine()
-                      ->getRepository(Todo::class)
-                      ->findAll();
+        /** @var TodoRepository $repository */
+        $repository = $this->getDoctrine()->getRepository(Todo::class);
+        
+        if(strlen($searchterm) > 0)
+        {
+            $todos = $repository->findBySearchterm($searchterm);
+        }
+        else
+        {
+            $todos = $repository->findAll();
+        }
         
         return $todos;
     }

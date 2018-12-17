@@ -17,7 +17,7 @@ abstract class BasicController extends AbstractController
      * @return  array|null
      * @author  Markus Buscher
      */
-    protected function getRequestData(Request $request): array
+    protected function getRequestData(Request $request): ?array
     {
         $content_raw = $request->getContent();
         $content = strlen($content_raw) ? json_decode($content_raw, true) : null;
@@ -108,10 +108,12 @@ abstract class BasicController extends AbstractController
      *
      * @param   array   $rows
      * @param   int     $http_status_code
+     * @param   array   $headers
      * @return  JsonResponse
      * @author  Markus Buscher
      */
-    protected function successJson(array $rows, int $http_status_code = JsonResponse::HTTP_OK): JsonResponse
+    protected function successJson(array $rows, int $http_status_code = JsonResponse::HTTP_OK,
+        array $headers = []): JsonResponse
     {
         $response_body = array(
             'rows'    => $rows,
@@ -119,6 +121,6 @@ abstract class BasicController extends AbstractController
             'total'   => count($rows)
         );
         
-        return parent::json($rows, $http_status_code);
+        return parent::json($rows, $http_status_code, $headers);
     }
 }

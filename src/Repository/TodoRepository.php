@@ -18,33 +18,23 @@ class TodoRepository extends ServiceEntityRepository
     {
         parent::__construct($registry, Todo::class);
     }
-
-    // /**
-    //  * @return Todo[] Returns an array of Todo objects
-    //  */
-    /*
-    public function findByExampleField($value)
+    
+    
+    /**
+     * Filter the list of Todos by the given searchterm (respected fields are title, description and owner)
+     *
+     * @param string $searchterm
+     * @return
+     * @author Markus Buscher
+     */
+    public function findBySearchterm(string $searchterm)
     {
-        return $this->createQueryBuilder('t')
-            ->andWhere('t.exampleField = :val')
-            ->setParameter('val', $value)
-            ->orderBy('t.id', 'ASC')
-            ->setMaxResults(10)
+        return $this->createQueryBuilder("t")
+            ->orWhere('t.title LIKE :searchterm')
+            ->orWhere('t.description LIKE :searchterm')
+            ->orWhere('t.owner LIKE :searchterm')
+            ->setParameter('searchterm', '%'.$searchterm.'%')
             ->getQuery()
-            ->getResult()
-        ;
+            ->getResult();
     }
-    */
-
-    /*
-    public function findOneBySomeField($value): ?Todo
-    {
-        return $this->createQueryBuilder('t')
-            ->andWhere('t.exampleField = :val')
-            ->setParameter('val', $value)
-            ->getQuery()
-            ->getOneOrNullResult()
-        ;
-    }
-    */
 }
